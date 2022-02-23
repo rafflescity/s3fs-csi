@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3fs-test-box-static-path
+  labels:
+    app: s3fs-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3fs-test
+  template:
+    metadata:
+      labels:
+        app: s3fs-test
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: s3fs-test
+        image: daocloud.io/busybox
+        command:
+          - tail
+          - -f
+          - /dev/null
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+          - name: data
+            mountPath: /mnt
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: s3fs-test-pvc-static-path
